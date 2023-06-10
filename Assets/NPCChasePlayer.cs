@@ -33,6 +33,7 @@ public class NPCChasePlayer : MonoBehaviour
 
             // Menghitung arah menuju pemain
             Vector3 direction = (player.transform.position - transform.position).normalized;
+            direction.y = 0f; // Tetapkan komponen Y ke 0
 
             // Menggerakkan NPC ke arah pemain
             rb.MovePosition(transform.position + direction * moveSpeed * Time.deltaTime);

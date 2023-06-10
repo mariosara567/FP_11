@@ -26,7 +26,7 @@ public class CameraZoneSwitcherr : MonoBehaviour
             Transform playerTransform = playerGameObject.transform;
 
             // Mengubah posisi player ke koordinat yang ditentukan
-            playerTransform.position = new Vector3(647f, 0.37f, 116.3f);
+            playerTransform.position = new Vector3(647f, -1.5f, 116.3f);
             lightObject.SetActive(true);
         }
         if (other.CompareTag("BackPos1"))
@@ -37,7 +37,7 @@ public class CameraZoneSwitcherr : MonoBehaviour
             Transform playerTransform = playerGameObject.transform;
 
             // Mengubah posisi player ke koordinat yang ditentukan
-            playerTransform.position = new Vector3(251f, 6.8f, 106f);
+            playerTransform.position = new Vector3(251f, 4.9f, 106f);
             lightObject.SetActive(false);
         }
         if (other.CompareTag("GeneratorRoom1"))
@@ -49,7 +49,7 @@ public class CameraZoneSwitcherr : MonoBehaviour
             Transform playerTransform = playerGameObject.transform;
 
             // Mengubah posisi player ke koordinat yang ditentukan
-            playerTransform.position = new Vector3(1078.5f, 0.55f, 290f);
+            playerTransform.position = new Vector3(1078.5f, -1.35f, 290f);
             lightObject.SetActive(true);
         }
         if (other.CompareTag("BackGeneratorRoom1"))
@@ -60,7 +60,7 @@ public class CameraZoneSwitcherr : MonoBehaviour
             Transform playerTransform = playerGameObject.transform;
 
             // Mengubah posisi player ke koordinat yang ditentukan
-            playerTransform.position = new Vector3(165.5f, 6.8f, 153.5f);
+            playerTransform.position = new Vector3(165.5f, 4.9f, 153.5f);
             lightObject.SetActive(false);
         }
     }
