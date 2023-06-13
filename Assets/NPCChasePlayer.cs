@@ -5,50 +5,59 @@ public class NPCChasePlayer : MonoBehaviour
     public GameObject player;
     public float moveSpeed = 5f;
     public float viewRadius = 10f;
-    public float enlargedViewRadius = 15f; // Radius diperbesar saat pemain berada dalam area
+    public float enlargedViewRadius = 15f;
 
+    private Animator animator;
     private Rigidbody rb;
-    private bool isPlayerInArea = false; // Menandakan apakah pemain berada dalam area
+    private bool isPlayerInArea = false;
 
     private void Start()
     {
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
     {
-        // Periksa apakah objek pemain ada sebelum melanjutkan
         if (player == null)
             return;
 
-        // Periksa apakah pemain berada dalam area pandang
         if (Vector3.Distance(transform.position, player.transform.position) <= viewRadius)
         {
             if (!isPlayerInArea)
             {
-                // Pemain memasuki area, perbesar radius
                 viewRadius = enlargedViewRadius;
                 isPlayerInArea = true;
             }
 
-            // Menghitung arah menuju pemain
             Vector3 direction = (player.transform.position - transform.position).normalized;
-            direction.y = 0f; // Tetapkan komponen Y ke 0
+            direction.y = 0f;
 
-            // Menggerakkan NPC ke arah pemain
             rb.MovePosition(transform.position + direction * moveSpeed * Time.deltaTime);
+
+            if (direction != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            }
+
+            float horizontalAcc = Mathf.Clamp(direction.x, -1, 1);
+            float verticalAcc = Mathf.Clamp(direction.z, -1, 1);
+
+            animator.SetFloat("Horizontal", horizontalAcc);
+            animator.SetFloat("Vertical", verticalAcc);
+            animator.SetBool("isMoving", true);
         }
         else if (isPlayerInArea)
         {
-            // Pemain keluar dari area, kembalikan radius ke ukuran awal
             viewRadius = 10f;
             isPlayerInArea = false;
+            animator.SetBool("isMoving", false);
         }
     }
 
     private void OnDrawGizmosSelected()
     {
-        // Menggambar area pandang dalam Scene View di Unity Editor
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, viewRadius);
     }
