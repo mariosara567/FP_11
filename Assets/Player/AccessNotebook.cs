@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AccessNotebook : MonoBehaviour
 {
+    [SerializeField] Power power;
     public GameObject noteBook;
     public GameObject monitor;
     public GameObject virtualCamera;
@@ -30,7 +31,8 @@ public class AccessNotebook : MonoBehaviour
                 virtualCamera.SetActive(false);
                 monitorActive = false;
                 playerMovement.jalan = 2.5f;
-                playerMovement.lari = 10;
+                playerMovement.lari = 4;
+                power.generatorSFX.Stop();
                 
             }      
             
@@ -51,7 +53,7 @@ public class AccessNotebook : MonoBehaviour
                 noteBook.SetActive(false);
                 noteBookActive = false;
                 playerMovement.jalan = 2.5f;
-                playerMovement.lari = 10;
+                playerMovement.lari = 4;
                 
             }
         }

@@ -20,9 +20,10 @@ public class PlayManager : MonoBehaviour
     [SerializeField] List <GameObject> intruderTerrainPositionList;
     
     [SerializeField] Intruder intruderNPC;
-    [SerializeField] float initialTimer = 10;
+    [SerializeField] float initialTimer = 20;
     [SerializeField] GameObject endGamePanel;
     [SerializeField] MonitorButton monitorButton;
+    [SerializeField] EndGameResult endGameResult;
     public Transform virtualParent;
     public Transform terrainParent;
    
@@ -39,11 +40,13 @@ public class PlayManager : MonoBehaviour
     public List <Intruder> instantiateIntruderTerrainList = new List<Intruder>();
 
 
-    public List <WarningObject> warningObjectInstantiateList = new List<WarningObject>();
+    public List <WarningObject> warningObjectVirtualInstantiateList = new List<WarningObject>();
+    public List <WarningObject> warningObjectTerrainInstantiateList = new List<WarningObject>();
 
     // posisi-posisi spawn dan move yang berhasil (direset di jam berikutnya )
     public List <GameObject> SpawnPositionList = new List<GameObject>();
     public List <string> AreaPositionList = new List<string>();
+
 
 
 
@@ -54,6 +57,7 @@ public class PlayManager : MonoBehaviour
     int gameTime = 5; 
     bool timerActive = true;
     bool endGameActive = false;
+    public int timeText = 0;
 
     // spawn chance
     int evidenceItemSpawnChance = 5;
@@ -64,6 +68,7 @@ public class PlayManager : MonoBehaviour
     // charisma point
     public int charismaPoint;
     public int maxCharisma;
+    public int intruderLimit;
 
     public CameraZoneSwitcherr cameraZoneSwitcherr;
     public Power power;
@@ -115,11 +120,13 @@ public class PlayManager : MonoBehaviour
 
 
         gameTime--;
-        timer = 10;
+        timer = 20;
     }
 
     public void Update()
     {
+        //Pause Menu
+        
 
 
         // Debug.Log("GAMETIME IS " + gameTime);
@@ -134,6 +141,8 @@ public class PlayManager : MonoBehaviour
         //instantiate akan berjalan setiap jam gametime
         if(timer <= 0 && timerActive == true)
         {
+            timeText++;
+
             // maksimal spawn (1,3)
             int randomEvidenceItem = Random.Range(1,3);
             int randomWarningObject = Random.Range(1,3);
@@ -143,14 +152,20 @@ public class PlayManager : MonoBehaviour
             // Debug.Log("INTRUDER PREFAB SPAWN COUNT IS: " + randomIntruder);
 
             //setiap jam (setelah instantiate) akan di cek intruder yang aktif akan menambah maxCharisma
+   
             for (int i = 0; i < instantiateIntruderList.Count; i++)
             {
-                if (instantiateIntruderList[i].gameObject.activeInHierarchy == true)
+                if (instantiateIntruderList[i].gameObject.activeInHierarchy == true && intruderLimit < 15)
                 {
                     maxCharisma++;
+                    intruderLimit++;
+                    endGameResult.valueINRTotal++;
                     // Debug.Log("MAX CHARISMA IS: " + maxCharisma);
                 }
             }
+
+
+
             
             //Instantiate
             for (int i = randomEvidenceItem; i > 0; i--)
@@ -190,7 +205,7 @@ public class PlayManager : MonoBehaviour
             // SpawnPositionList.RemoveRange(0, SpawnPositionList.Count - 1);
     
             gameTime--;
-            timer = 10;
+            timer = 20;
         }
 
 
@@ -217,9 +232,6 @@ public class PlayManager : MonoBehaviour
             var prefab = intruderPrefabList[rand];
             var prefabData = intruderDataList[rand];
 
-            
-
-            
 
             //playManager.gametime = intruder.gametime
             prefabData.gameTime = gameTime;
@@ -267,12 +279,12 @@ public class PlayManager : MonoBehaviour
                 // Debug.Log("INTRUDER CHANCE [RANDOM INSTANTIATE] IS " + intruderVirtualPositionList[randomInstantiate]);
 
                 //detik spawn warning object ( <= 0.5 * one hour)
-                int randomActiveTime = Random.Range(0,5);
+                int randomActiveTime = Random.Range(0,10);
                 instantiateIntruderList[i].intruderActiveTime = randomActiveTime;
                 instantiateIntruderTerrainList[i].intruderActiveTime = randomActiveTime;
 
                 //menghitung interval waktu intruder aktif
-                int randomIntervalTime = Random.Range(3,5);
+                int randomIntervalTime = Random.Range(8,10);
                 instantiateIntruderList[i].intruderIntervalTime = randomIntervalTime;
                 instantiateIntruderTerrainList[i].intruderIntervalTime = randomIntervalTime;
 
@@ -382,7 +394,7 @@ public class PlayManager : MonoBehaviour
             prefabDataTerrain.spawnPosition = warningObjectVirtualPositionList[randomVirtual];
 
             //detik spawn warning object ( <= 0.5 * one hour)
-            int randomActiveTime = Random.Range(0,5);
+            int randomActiveTime = Random.Range(0,10);
             prefabDataVirtual.warningObjectActiveTime = randomActiveTime;
             prefabDataTerrain.warningObjectActiveTime = randomActiveTime;
 
@@ -397,14 +409,15 @@ public class PlayManager : MonoBehaviour
             {
                 if (gameTime >= 0)
                 {
-                    Instantiate(prefabDataVirtual, virtualParent);
-                    Instantiate(prefabDataTerrain, terrainParent);
+                    warningObjectVirtualInstantiateList.Add(Instantiate(prefabDataVirtual, virtualParent));
+                    warningObjectTerrainInstantiateList.Add(Instantiate(prefabDataTerrain, terrainParent));
                     // Debug.Log("WARNING OBJECT VIRTUAL POSITION LIST COUNT IS " + warningObjectVirtualPositionList.Count);
                     // Debug.Log("WARNING OBJECT TERRAIN POSITION LIST COUNT IS " + warningObjectTerrainPositionList.Count);
                     warningObjectVirtualPositionList.RemoveAt(randomVirtual);
                     warningObjectTerrainPositionList.RemoveAt(randomVirtual);
                     
                     maxCharisma++;
+                    endGameResult.valueWONCTotal++;
                 }
 
             }
@@ -424,7 +437,7 @@ public class PlayManager : MonoBehaviour
             prefabDataTerrain.spawnPosition = evidenceItemTerrainPositionList[randomTerrain];
 
             //detik spawn warning object ( <= 0.5 * one hour)
-            int randomActiveTime = Random.Range(0,5);
+            int randomActiveTime = Random.Range(0,10);
             prefabDataTerrain.evidenceItemActiveTime = randomActiveTime;
 
             //playManager.gametime = intruder.gametime

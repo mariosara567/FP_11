@@ -10,38 +10,51 @@ public class MonitorButton : MonoBehaviour
     [SerializeField] public List <GameObject> terrainCameraCollider;
     [SerializeField] public List <Light> terrainCameraLight;
     [SerializeField] public List <GameObject> cameraError;
+    [SerializeField] public List <GameObject> cameraName;
 
     [SerializeField] public List <GameObject> virtualLampPost;
     [SerializeField] public List <GameObject> terrainLampPost;
+    [SerializeField] public List <lampPostActive> terrainLampPostActive;
     [SerializeField] public List <Material> lampMaterial;
     [SerializeField] public List <GameObject> lampCollider;
     [SerializeField] public List <Image> lampUI;
 
     [SerializeField] public List <GameObject> door;
+    [SerializeField] public List <doorActive> doorActives;
     [SerializeField] public List <Collider> areaToEnterPos;
     [SerializeField] public List <GameObject> doorLamp;
     [SerializeField] public List <Image> doorUI;
 
     [SerializeField] CameraZoneSwitcherr cameraZoneSwitcherr;
+    [SerializeField] Power power;
     public PlayManager playManager;
     public GameObject intruderPostWayOut;
     public GameObject NPCPostMediumToRight;
     public GameObject NPCPostMediumToLeft;
 
 
-    
+
 
     public void UpdateVirtualCamera(int value)
     {
-        
 
         for (int i = 0; i < virtualCamera.Count; i++)
         {
             virtualCamera[i].SetActive(false);
+            cameraName[i].SetActive(false);
         }
 
         virtualCamera[value].SetActive(true);
+        cameraName[value].SetActive(true);
 
+        if (virtualCamera[3].activeInHierarchy == true)
+        {
+            power.generatorSFX.Play();
+        }
+        else
+        {
+            power.generatorSFX.Stop();
+        }
         
     }
 
@@ -65,7 +78,7 @@ public class MonitorButton : MonoBehaviour
             lampMaterial[value].color = new Color(0,0,0);
             lampCollider[value].SetActive(false);
             lampUI[value].color = new Color (255, 0, 0);
-        }   
+        }  
     }
 
     public void UpdateDoorLock(int value)
@@ -85,12 +98,16 @@ public class MonitorButton : MonoBehaviour
                 cameraZoneSwitcherr.NPCRightPostBait.SetActive(false);
                 NPCPostMediumToRight.SetActive(false);
                 NPCPostMediumToLeft.SetActive(false);
-                intruderPostWayOut.SetActive(true);
+                // intruderPostWayOut.SetActive(true);
+                // for (int i = 0; i < cameraZoneSwitcherr.nPCChaseList.Count; i++)
+                // {   
+                // cameraZoneSwitcherr.nPCChaseList[i].player = intruderPostWayOut;
+                // }
                 for (int i = 0; i < cameraZoneSwitcherr.nPCChaseList.Count; i++)
                 {   
-                cameraZoneSwitcherr.nPCChaseList[i].player = intruderPostWayOut;
+                cameraZoneSwitcherr.nPCChaseList[i].viewRadius = 25;
                 }
-                
+     
             }
             else if (door[0].activeInHierarchy == false)
             {
@@ -134,7 +151,6 @@ public class MonitorButton : MonoBehaviour
                 {   
                 cameraZoneSwitcherr.nPCChaseList[i].player = cameraZoneSwitcherr.NPCLeftPostBait;
                 }
-                
             }
             else if (door[0].activeInHierarchy == true)
             {

@@ -6,7 +6,7 @@ public class WarningObject : MonoBehaviour
 {
 
     //initialTimer adalah waktu dalam one hour gametime (3 menit realtime)
-    [SerializeField] float initialTimer = 10;
+    [SerializeField] float initialTimer = 180;
 
     public GameObject ObjectChild;
     public GameObject spawnPosition;
@@ -37,7 +37,7 @@ public class WarningObject : MonoBehaviour
     private void Update()
     {
             //Deactive (one hour - intruderActiveTime)
-            float timeSpawn = 10 - warningObjectActiveTime;
+            float timeSpawn = 180 - warningObjectActiveTime;
             if (timer <= timeSpawn)
             {
                 //Active in virtual and Terrain

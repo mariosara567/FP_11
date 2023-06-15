@@ -6,6 +6,9 @@ public class AccessObject : MonoBehaviour
 {
     [SerializeField] PlayManager playManager;
     [SerializeField] MonitorButton monitorButton;
+    [SerializeField] EndGameResult endGameResult;
+    
+
 
 
     private void OnTriggerStay(Collider other)
@@ -16,6 +19,16 @@ public class AccessObject : MonoBehaviour
             {
                 other.gameObject.SetActive(false);
                 playManager.charismaPoint++;
+                endGameResult.valueWOC++;
+
+                for (int i = 0; i < playManager.warningObjectTerrainInstantiateList.Count; i++)
+                {
+                    if (playManager.warningObjectTerrainInstantiateList[i].gameObject.activeInHierarchy == false)
+                    {
+                        playManager.warningObjectVirtualInstantiateList[i].gameObject.SetActive(false);
+                    }
+                }
+
             }    
         }
 
@@ -25,6 +38,7 @@ public class AccessObject : MonoBehaviour
             {
                 other.gameObject.SetActive(false);
                 playManager.charismaPoint++;
+                endGameResult.valueEIF++;
             }
         }
 

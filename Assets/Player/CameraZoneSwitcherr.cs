@@ -2,16 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using TMPro;
 
 public class CameraZoneSwitcherr : MonoBehaviour
 {
     [SerializeField] PlayManager playManager;
     [SerializeField] MonitorButton monitorButton;
     [SerializeField] NPCChasePlayer nPCChasePlayer;
+    [SerializeField] Toilet toilet;
+    [SerializeField] GameObject pauseMenu;
+    
+    [SerializeField] Power power;
     public CinemachineVirtualCamera primaryCamera;
     public CinemachineVirtualCamera[] virtualCameras;
     public GameObject playerGameObject;
-    public GameObject lightObject;
+    public TMP_Text night1Text;
 
     public List <NPCChasePlayer> nPCChaseList = new List<NPCChasePlayer>();
     public List <NPCChasePlayer> nPCChaseInPostList = new List<NPCChasePlayer>();
@@ -28,18 +33,76 @@ public class CameraZoneSwitcherr : MonoBehaviour
     public float timer;
     public float OutTimer = 1;
     public float timerToPost; 
+    public float timerToRemove = 5;
+    public float penurunanVisibilitas = 3f;
+    public float visibilitas = 255f;
+    public float visibleValue;
+
+    bool pauseMenuActive = false;
 
     private void Start()
     {
         SwitchToCamera(primaryCamera);
+        visibleValue = visibilitas;
     }
     
     private void Update()
     {
+        //Pause Menu
+        if (Input.GetKeyDown(KeyCode.Escape) && pauseMenuActive == false)
+        {
+            pauseMenu.SetActive(true);
+            pauseMenuActive = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && pauseMenuActive == true)
+        {
+            pauseMenu.SetActive(false);
+            pauseMenuActive = false;
+        }
+
         if (nPCChaseList.Count == 0 && nPCChaseInPostList.Count == 0)
         {
             chaseEvent = false;
         }
+
+        // intruder menghilang saat kedua pintu terkunci
+        if ( monitorButton.door[0].activeInHierarchy == false && monitorButton.door[1].activeInHierarchy == false)
+            {
+                if (timerToRemove <= 0)
+                {
+                    for (int i = 0; i < nPCChaseList.Count; i++)
+                    {   
+                        nPCChaseList[i].gameObject.SetActive(false);
+
+                    }
+                }
+                timerToRemove -=Time.deltaTime;
+            }
+        else if (toilet.toiletEvent1 == true || toilet.toiletEvent2 == true)
+        {
+
+                if (timerToRemove <= 0)
+                {
+                    for (int i = 0; i < nPCChaseList.Count; i++)
+                    {   
+                        nPCChaseList[i].gameObject.SetActive(false);
+
+                    }
+                }
+                timerToRemove -=Time.deltaTime;
+        }
+        else
+        {
+            timerToRemove = 5;
+        }
+
+        // "Night 1" di beginning
+        float visibleValue = Mathf.Clamp(visibilitas - penurunanVisibilitas * Time.deltaTime, 0, visibilitas);
+        night1Text.color = new Color(255, 255, 255, visibleValue);
+        
+
+        
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -166,7 +229,13 @@ public class CameraZoneSwitcherr : MonoBehaviour
 
             NPCGeneratorBait.SetActive(true);
             intruderChaseGenerator = true;
-            timer = 1;          
+            if (power.blackoutActive == false)
+            {
+                power.generatorSFX.Play();
+            }
+            
+            timer = 1;  
+                    
         }
         if (other.CompareTag("BackGeneratorRoom1"))
         {
@@ -190,6 +259,7 @@ public class CameraZoneSwitcherr : MonoBehaviour
                 OutTimer++; 
             }
             NPCGeneratorBait.SetActive(false); 
+            power.generatorSFX.Stop();
             OutTimer = 1;
 
                    
@@ -215,7 +285,7 @@ public class CameraZoneSwitcherr : MonoBehaviour
                 if(timer <= 0 && nPCChaseList.Count >= 1)
                 {
 
-                            nPCChaseList[0].gameObject.transform.position = new Vector3 (555, -3.2f, -95);
+                            nPCChaseList[0].gameObject.transform.position = new Vector3 (555, -9.2f, -95);
                             nPCChaseList[0].moveSpeed = 30;
                             nPCChaseInPostList.Add(nPCChaseList[0]);
                             nPCChaseList.RemoveAt(0);
@@ -233,7 +303,7 @@ public class CameraZoneSwitcherr : MonoBehaviour
                 if(timer <= 0 && nPCChaseList.Count >= 1)
                 {
 
-                            nPCChaseList[0].gameObject.transform.position = new Vector3 (568, -3.2f, -95);
+                            nPCChaseList[0].gameObject.transform.position = new Vector3 (568, -9.2f, -95);
                             nPCChaseList[0].moveSpeed = 30;
                             nPCChaseInPostList.Add(nPCChaseList[0]);
                             nPCChaseList.RemoveAt(0);
@@ -249,7 +319,7 @@ public class CameraZoneSwitcherr : MonoBehaviour
                 
                 if(timer <= 0 && nPCChaseList.Count >= 1)
                 {
-                        nPCChaseList[0].gameObject.transform.position = new Vector3 (565, -3.2f, -42);
+                        nPCChaseList[0].gameObject.transform.position = new Vector3 (565, -9.2f, -42);
                         nPCChaseList[0].moveSpeed = 30;
                         nPCChaseInPostList.Add(nPCChaseList[0]);
                         nPCChaseList.RemoveAt(0);
@@ -274,12 +344,12 @@ public class CameraZoneSwitcherr : MonoBehaviour
                     {
                         Debug.Log("LPA ACTIVE " + monitorButton.door[0].activeInHierarchy );
                         playManager.instantiateIntruderTerrainList[i].objectChild.transform.parent = playManager.instantiateIntruderTerrainList[i].nPCChasePlayer.objectParent;
-                        playManager.instantiateIntruderTerrainList[i].objectChild.transform.position = new Vector3 (555, -3.2f, -95);
+                        playManager.instantiateIntruderTerrainList[i].objectChild.transform.position = new Vector3 (555, -9.2f, -95);
                         playManager.instantiateIntruderTerrainList[i].nPCChasePlayer.moveSpeed = 30;
                         nPCChaseInPostList.Add(playManager.instantiateIntruderTerrainList[i].nPCChasePlayer);
                         NPCLeftPostBait.SetActive(false);
                         playManager.instantiateIntruderTerrainList[i].gameObject.SetActive(false);
-                        timerToPost = 1;
+                        timerToPost = 10;
                     }  
                 }
 
@@ -290,12 +360,12 @@ public class CameraZoneSwitcherr : MonoBehaviour
                     {
                         Debug.Log("RPA ACTIVE " + monitorButton.door[1].activeInHierarchy);
                         playManager.instantiateIntruderTerrainList[i].objectChild.transform.parent = playManager.instantiateIntruderTerrainList[i].nPCChasePlayer.objectParent;
-                        playManager.instantiateIntruderTerrainList[i].objectChild.transform.position = new Vector3 (568, -3.2f, -95);
+                        playManager.instantiateIntruderTerrainList[i].objectChild.transform.position = new Vector3 (568, -9.2f, -95);
                         playManager.instantiateIntruderTerrainList[i].nPCChasePlayer.moveSpeed = 30;
                         nPCChaseInPostList.Add(playManager.instantiateIntruderTerrainList[i].nPCChasePlayer);
                         NPCRightPostBait.SetActive(false);
                         playManager.instantiateIntruderTerrainList[i].gameObject.SetActive(false);
-                        timerToPost = 1;
+                        timerToPost = 10;
                     }
                 }
             }
@@ -312,8 +382,8 @@ public class CameraZoneSwitcherr : MonoBehaviour
         if( nPCChaseInPostList.Count >= 1 )
         {
             Debug.Log(nPCChaseInPostList[0]);
-            nPCChaseInPostList[0].gameObject.transform.position = new Vector3 (39, -0.2f, -105.5f);
-            nPCChaseInPostList[0].moveSpeed = 10;
+            nPCChaseInPostList[0].gameObject.transform.position = new Vector3 (39, -6.2f, -105.5f);
+            nPCChaseInPostList[0].moveSpeed = 14;
             nPCChaseList.Add(nPCChaseInPostList[0]);
             nPCChaseInPostList.RemoveAt(0);
             
@@ -331,8 +401,8 @@ public class CameraZoneSwitcherr : MonoBehaviour
         if( nPCChaseInPostList.Count >= 1 )
         {
             Debug.Log(nPCChaseInPostList[0]);
-            nPCChaseInPostList[0].gameObject.transform.position = new Vector3 (51, -0.2f, -105.5f);
-            nPCChaseInPostList[0].moveSpeed = 10;
+            nPCChaseInPostList[0].gameObject.transform.position = new Vector3 (51, -6.2f, -105.5f);
+            nPCChaseInPostList[0].moveSpeed = 14;
             nPCChaseList.Add(nPCChaseInPostList[0]);
             nPCChaseInPostList.RemoveAt(0);
             
@@ -349,8 +419,8 @@ public class CameraZoneSwitcherr : MonoBehaviour
         if( nPCChaseInPostList.Count >= 1 )
         {
             Debug.Log(nPCChaseInPostList[0]);
-            nPCChaseInPostList[0].gameObject.transform.position = new Vector3 (-41, -0.2f, -57.5f);
-            nPCChaseInPostList[0].moveSpeed = 10;
+            nPCChaseInPostList[0].gameObject.transform.position = new Vector3 (-41, -6.2f, -57.5f);
+            nPCChaseInPostList[0].moveSpeed = 14;
             nPCChaseList.Add(nPCChaseInPostList[0]);
             nPCChaseInPostList.RemoveAt(0);
             

@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class NoteBookText : MonoBehaviour
 {
      [SerializeField] public TMP_Text text;
+     [SerializeField] EndGameResult endGameResult;
+     [SerializeField] GameObject inputLimitText;
      [SerializeField] PlayManager playManager;
      //untuk men-instantiate recordedText
      [SerializeField] GameObject recordedText;
@@ -58,6 +60,7 @@ public class NoteBookText : MonoBehaviour
      
     private void Update()
     {
+        Debug.Log("DELETE BUTTON DATA IN POSITION LIST: " + deleteButtonPositionInList);
         text.text = intruderType + " / " + intruderLocationToText + " / " + intruderTimeToText;
 
         if (intruderTypeTextInput == true && intruderLocationTextInput == true && intruderTimeTextInput == true && inputActive == true )
@@ -76,11 +79,16 @@ public class NoteBookText : MonoBehaviour
             }
         }
 
-        if (submitCount >= 10)
+        if (submitCount >= 15)
         {
             submitButton.interactable = false;
             inputActive = false;
+            inputLimitText.SetActive(true);
             Debug.Log("DATA HAS REACHED LIMIT");
+        }
+        else
+        {
+            inputLimitText.SetActive(false);
         }
 
         if (text.text != doubleCheckText)
@@ -128,6 +136,7 @@ public class NoteBookText : MonoBehaviour
             // addRecordedText.transform.parent = GameObject.Find("NoteBook").transform;
             submitTextList.Add(addRecordedText);
             submitTextListData.Add(recordedTextData.submitText.text);
+             Debug.Log("SUBMIT TEXT LIST IN NOTEBOOK: " + submitTextList.Count );
             // mereset location list yang di input setelah submit dan pengecekan
             locationList.Clear();
 
@@ -162,6 +171,16 @@ public class NoteBookText : MonoBehaviour
     public void IntruderCheck()
     {
         Debug.Log(string.Join("," , locationList));
+
+        if (playManager.instantiateIntruderList.Count <= 0)
+        {
+            Debug.Log("PLAYER SUBMIT REPORT, BUT FIRST INTRUDER IS NOT SPAWN YET");
+            playManager.charismaPoint--;
+            deleteButtonData[deleteButtonPositionInList].charismaPointStatus = false;
+            deleteButtonPositionInList++;
+            Debug.Log("CHARISMA POINT IS: " + playManager.charismaPoint);
+            submitActive = false;
+        }
   
     for (int i = 0; i < playManager.instantiateIntruderList.Count; i++)
             {
@@ -203,6 +222,7 @@ public class NoteBookText : MonoBehaviour
                                         Debug.Log("REPORT ACCEPTED");
                                         Debug.Log("DELETEBUTTONPOSITIONINLIST IS: " + deleteButtonPositionInList);
                                         playManager.charismaPoint++;
+                                        endGameResult.valueIRA++;
                                         deleteButtonData[deleteButtonPositionInList].charismaPointStatus = true;
                                         deleteButtonPositionInList++;
                                         Debug.Log("CHARISMA POINT IS: " + playManager.charismaPoint);
@@ -224,6 +244,7 @@ public class NoteBookText : MonoBehaviour
                                         //charisma point berkurang
                                         Debug.Log("REPORT DECLINED IN TIME");
                                         playManager.charismaPoint--;
+                                        endGameResult.valueIRD++;
                                         deleteButtonData[deleteButtonPositionInList].charismaPointStatus = false;
                                         deleteButtonPositionInList++;
                                         Debug.Log("CHARISMA POINT IS: " + playManager.charismaPoint);
@@ -240,6 +261,7 @@ public class NoteBookText : MonoBehaviour
                                     //charisma point berkurang
                                     Debug.Log("REPORT DECLINED UNTIL LAST INSTANTIATE LIST BUT DECLINED IN POSITION");
                                     playManager.charismaPoint--;
+                                    endGameResult.valueIRD++;
                                     deleteButtonData[deleteButtonPositionInList].charismaPointStatus = false;
                                     deleteButtonPositionInList++;
                                     Debug.Log("CHARISMA POINT IS: " + playManager.charismaPoint);
@@ -257,6 +279,7 @@ public class NoteBookText : MonoBehaviour
                                 {
                                     Debug.Log("REPORT DECLINED UNTIL LAST INSTANTIATE LIST BUT TYPE'S MATCH");
                                     playManager.charismaPoint--;
+                                    endGameResult.valueIRD++;
                                     deleteButtonData[deleteButtonPositionInList].charismaPointStatus = false;
                                     deleteButtonPositionInList++;
                                     Debug.Log("CHARISMA POINT IS: " + playManager.charismaPoint);
@@ -270,6 +293,7 @@ public class NoteBookText : MonoBehaviour
                                 //charisma point berkurang
                                 Debug.Log("REPORT DECLINED UNTIL LAST INSTANTIATE LIST");
                                 playManager.charismaPoint--;
+                                endGameResult.valueIRD++;
                                 deleteButtonData[deleteButtonPositionInList].charismaPointStatus = false;
                                 deleteButtonPositionInList++;
                                 Debug.Log("CHARISMA POINT IS: " + playManager.charismaPoint);

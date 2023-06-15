@@ -7,15 +7,17 @@ public class NPCChasePlayer : MonoBehaviour
     public Transform objectParent;
     public GameObject player;
     public float moveSpeed = 5f;
-    public float viewRadius = 10f;
+    public float viewRadius = 25f;
     public float enlargedViewRadius = 15f; // Radius diperbesar saat pemain berada dalam area
 
+    private Animator animator;
     private Rigidbody rb;
     private bool isPlayerInArea = false; // Menandakan apakah pemain berada dalam area
     
 
     private void Start()
     {
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
     }
 
@@ -45,15 +47,30 @@ public class NPCChasePlayer : MonoBehaviour
 
             // Menghitung arah menuju pemain
             Vector3 direction = (player.transform.position - transform.position).normalized;
+            direction.y = 0f;
 
             // Menggerakkan NPC ke arah pemain
             rb.MovePosition(transform.position + direction * moveSpeed * Time.deltaTime);
+
+            //fungsi animasi
+             if (direction != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            }
+
+            float horizontalAcc = Mathf.Clamp(direction.x, -1, 1);
+            float verticalAcc = Mathf.Clamp(direction.z, -1, 1);
+
+            animator.SetFloat("Horizontal", horizontalAcc);
+            animator.SetFloat("Vertical", verticalAcc);
+            animator.SetBool("isMoving", true);
         }
         else if (isPlayerInArea)
         {
             // Pemain keluar dari area, kembalikan radius ke ukuran awal
-            viewRadius = 10f;
             isPlayerInArea = false;
+            animator.SetBool("isMoving", false);
         }
     }
 

@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public class Senter : MonoBehaviour
 {
     public float energiSenter = 100f;
-    public float penurunanEnergiSenter = 10f;
-    public float penambahanEnergiSenter = 5f;
+    public float penurunanEnergiSenter = 2f;
+    public float penambahanEnergiSenter = 10f;
     public Slider energiSenterSlider;
 
     public GameObject targetObject;
@@ -18,6 +18,9 @@ public class Senter : MonoBehaviour
 
     public float totalEnergiSenter;
 
+    [SerializeField] AudioSource chargingSFX;
+    bool inChargingPositionActive = false;
+
     private void Start()
     {
         totalEnergiSenter = energiSenter;
@@ -26,7 +29,7 @@ public class Senter : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.T))
         {
             isOn = !isOn;
             targetObject.SetActive(isOn);
@@ -62,6 +65,12 @@ public class Senter : MonoBehaviour
                 totalEnergiSenter = Mathf.Clamp(totalEnergiSenter + penambahanEnergiSenter * Time.deltaTime, 0f, energiSenter);
                 isOn = false;
                 targetObject.SetActive(false);
+                if (inChargingPositionActive == false)
+                {
+                    chargingSFX.Play();
+                    inChargingPositionActive = true;
+                }
+                
             
         }
     }
@@ -69,7 +78,8 @@ public class Senter : MonoBehaviour
     {
         if (other.CompareTag("Charger"))
         {
-                chargerLamp.GetComponent<Renderer>().material.SetColor("_Color", Color.red);            
+                chargerLamp.GetComponent<Renderer>().material.SetColor("_Color", Color.red);  
+                inChargingPositionActive = false;
         }
     }
 

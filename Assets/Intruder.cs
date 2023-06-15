@@ -7,7 +7,7 @@ public class Intruder : MonoBehaviour
     // [SerializeField] Material intruderType;
     // [SerializeField] int intruderTime;
     [SerializeField] List <GameObject> intruderLocationList;
-    [SerializeField] float initialTimer = 10;
+    [SerializeField] float initialTimer = 20;
     [SerializeField] public string intruderType;
     [SerializeField] public NPCChasePlayer nPCChasePlayer;
     public List <GameObject> intruderLocation = new List<GameObject>();
@@ -98,7 +98,7 @@ public class Intruder : MonoBehaviour
                     }
                     // Debug.Log(string.Join("," , intruderTime));
             
-                    timer = 10;
+                    timer = 20;
                     gameTime--;      
                 }
                 else if (moveChance < 5)
@@ -113,7 +113,7 @@ public class Intruder : MonoBehaviour
             if (intruderActiveTimeActive == true)
             {
                 //menghitung berapa lama intruder aktif
-                float timeSpawn = 10 - intruderActiveTime;
+                float timeSpawn = 20 - intruderActiveTime;
                 if (timer <= timeSpawn)
                 {
                     //Active: CCTV and Chase()

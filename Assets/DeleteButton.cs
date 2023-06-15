@@ -6,6 +6,7 @@ public class DeleteButton : MonoBehaviour
 {
     [SerializeField] NoteBookText noteBookText;
     [SerializeField] PlayManager playManager;
+    [SerializeField] EndGameResult endGameResult;
     public int submitCount;
     public int positionInSubmitList;
     public bool charismaPointStatus;
@@ -16,7 +17,7 @@ public class DeleteButton : MonoBehaviour
     public void DeleteText()
     {
         Debug.Log("POSITION IN SUBMIT LIST IN DELETE BUTTON IS: " + positionInSubmitList);
-        Debug.Log("SUBMIT COUNT IN DELETE BUTTON IS: " + submitCount);
+        Debug.Log("SUBMIT TEXT LIST: " + noteBookText.submitTextList.Count );
         if (positionInSubmitList == submitCount )
         {
             Debug.Log("INSTANTIATE TEXT COUNT IS: " + noteBookText.submitTextList.Count);
@@ -32,10 +33,12 @@ public class DeleteButton : MonoBehaviour
             if (charismaPointStatus == true)
             {
                 playManager.charismaPoint--;
+                endGameResult.valueIRA--;
             }
             else if (charismaPointStatus == false)
             {
                 playManager.charismaPoint++;
+                endGameResult.valueIRD--;
             }
             noteBookText.deleteButtonPositionInList--;
             Debug.Log("CHARISMA POINT AFTER DELETE BUTTON IS: " + playManager.charismaPoint);
@@ -59,7 +62,7 @@ public class DeleteButton : MonoBehaviour
                 Debug.Log("DATA CHECKING " + i );
                 Debug.Log("CHARISMA POINT STATUS IS: " + charismaPointStatus );
                 noteBookText.submitTextList[i].transform.localPosition = new Vector3(noteBookText.submitTextList[i].transform.localPosition.x,
-                noteBookText.submitTextList[i].transform.localPosition.y + 20,
+                noteBookText.submitTextList[i].transform.localPosition.y + 50,
                 noteBookText.submitTextList[i].transform.localPosition.z);
                 
                 
@@ -76,10 +79,12 @@ public class DeleteButton : MonoBehaviour
             if (charismaPointStatus == true)
             {
                 playManager.charismaPoint--;
+                endGameResult.valueIRA--;
             }
             else if (charismaPointStatus == false)
             {
                 playManager.charismaPoint++;
+                endGameResult.valueIRD--;
             }
             noteBookText.deleteButtonPositionInList--;
             Debug.Log("CHARISMA POINT AFTER DELETE BUTTON IS: " + playManager.charismaPoint);

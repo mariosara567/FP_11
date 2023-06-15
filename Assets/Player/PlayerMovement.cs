@@ -3,12 +3,13 @@ using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
-    
+    [SerializeField] Animator animator;
+    [SerializeField] float rotateSpeed = 90;
     public float jalan = 2.5f;
-    public float lari = 10f;
+    public float lari = 4f;
     public float kekuatan = 100f;
     public float penurunanStamina = 10f;
-    public float penambahanStamina = 5f;
+    public float penambahanStamina = 10f;
 
     // Waktu regenerasi stamina
     private float regenTime = 1f;
@@ -17,10 +18,12 @@ public class PlayerMovement : MonoBehaviour
     private float regenTimer;
 
     public Slider staminaSlider;
-
     public float totalStamina;
     private Rigidbody rb;
     private Quaternion targetRotation;
+
+    private float horizontalAcc;
+    private float verticalAcc;
 
     
 
@@ -83,9 +86,31 @@ public class PlayerMovement : MonoBehaviour
             targetRotation = Quaternion.LookRotation(perpindahan);
         }
 
-        // Mengganti rotasi kubus secara bertahap
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        //fungsi animasi
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+
+        if (horizontalInput > 0)
+            horizontalAcc += Time.deltaTime;
+        else if (horizontalInput < 0)
+            horizontalAcc -= Time.deltaTime;
+        else
+            horizontalAcc = Mathf.Lerp(horizontalAcc, 0, 2 * Time.deltaTime);
+
+        if (verticalInput > 0)
+            verticalAcc += Time.deltaTime;
+        else if (verticalInput < 0)
+            verticalAcc -= Time.deltaTime;
+        else
+            verticalAcc = Mathf.Lerp(verticalAcc, 0, 2 * Time.deltaTime);
+
+        horizontalAcc = Mathf.Clamp(horizontalAcc, -1, 1);
+        verticalAcc = Mathf.Clamp(verticalAcc, -1, 1);
+
+        animator.SetFloat("Horizontal", horizontalAcc);
+        animator.SetFloat("Vertical", verticalAcc);
+        animator.SetBool("isMoving", (horizontalInput != 0 || verticalInput != 0));
     }
+
 
     private void UpdateStaminaUI()
     {

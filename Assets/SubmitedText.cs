@@ -17,7 +17,7 @@ public class SubmitedText : MonoBehaviour
         // Debug.Log("DATA RECORDED");
         positionInSubmitList = submitCount;
         this.transform.localPosition = new Vector3(this.transform.localPosition.x,
-            this.transform.localPosition.y - (20 * submitCount),
+            this.transform.localPosition.y - (50 * submitCount),
             this.transform.localPosition.z);
 
         // Debug.Log("SUBMIT COUNT: " + submitCount);

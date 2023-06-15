@@ -20,8 +20,8 @@ public class Toilet : MonoBehaviour
     [SerializeField] CameraZoneSwitcherr cameraZoneSwitcherr;
     [SerializeField] GameObject IntruderWayOut;
     [SerializeField] PlayManager playManager;
-    bool toiletEvent1 = false;
-    bool toiletEvent2 = false;
+    public bool toiletEvent1 = false;
+    public bool toiletEvent2 = false;
     int tryNum1;
     int tryNum2;
     float chance = 5;
@@ -52,7 +52,7 @@ public class Toilet : MonoBehaviour
                 sanity.totalSanity = Mathf.Clamp(sanity.totalSanity + sanity.penambahanSanity * Time.deltaTime, 0f, sanity.sanity);
                
                 playerMovement.jalan = 2.5f;
-                playerMovement.lari = 10;
+                playerMovement.lari = 4;
                 for (int i = 0; i < cameraZoneSwitcherr.nPCChaseList.Count; i++)
                     {
                         cameraZoneSwitcherr.nPCChaseList[i].player = player;
@@ -92,12 +92,13 @@ public class Toilet : MonoBehaviour
                     // toiletDoor2.transform.Rotate(-100,180,-90, Space.World);
                     sanity.totalSanity = Mathf.Clamp(sanity.totalSanity + sanity.penambahanSanity * Time.deltaTime, 0f, sanity.sanity);
                     IntruderWayOut.SetActive(false);
-                
+
                     playerMovement.jalan = 2.5f;
-                    playerMovement.lari = 10;   
+                    playerMovement.lari = 4;   
 
                     for (int i = 0; i < cameraZoneSwitcherr.nPCChaseList.Count; i++)
                     {
+                        cameraZoneSwitcherr.nPCChaseList[i].viewRadius = 1100;
                         cameraZoneSwitcherr.nPCChaseList[i].player = player;
                         playManager.player = player;
                     }   
@@ -137,10 +138,10 @@ public class Toilet : MonoBehaviour
 
                 for (int i = 0; i < cameraZoneSwitcherr.nPCChaseList.Count; i++)
                 {
+                    cameraZoneSwitcherr.nPCChaseList[i].viewRadius = 25;
                     cameraZoneSwitcherr.nPCChaseList[i].player = IntruderWayOut;
                     playManager.player = IntruderWayOut;
                 }
-                
                 
             }
         }
@@ -160,6 +161,7 @@ public class Toilet : MonoBehaviour
 
                 for (int i = 0; i < cameraZoneSwitcherr.nPCChaseList.Count; i++)
                 {
+                    cameraZoneSwitcherr.nPCChaseList[i].viewRadius = 25;
                     cameraZoneSwitcherr.nPCChaseList[i].player = IntruderWayOut;
                     playManager.player = IntruderWayOut;
                 }
